@@ -25,22 +25,25 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const currentPageTitle = activeItem?.label || 'Dashboard';
   
   // Filter navigation items based on user role using useMemo for efficiency
-  // This ensures restricted pages are not visible in the sidebar navigation
+  // This ensures pages are cleanly visible based on role
   const filteredNavItems = useMemo(() => {
-    // Explicitly return empty array if no user is logged in to ensure no nav items are rendered
     if (!user) return [];
     
     return NAV_ITEMS.filter(item => {
-      // Check if the item's allowed roles include the user's current role
-      return item.roles.includes(user.role);
+      if (!item.roles || item.roles.length === 0) return true;
+      const userRole = (user.role as string)?.toLowerCase();
+      return item.roles.some(r => (r as string)?.toLowerCase() === userRole);
     });
   }, [user]);
 
   // Defense in depth: Check if current path is allowed for the user
-  // If a user navigates manually to a restricted URL, this acts as a secondary guard
   useEffect(() => {
-    if (user && activeItem && !activeItem.roles.includes(user.role)) {
-      navigate('/dashboard', { replace: true });
+    if (user && activeItem && activeItem.roles) {
+      const userRole = (user.role as string)?.toLowerCase();
+      const isAllowed = activeItem.roles.some(r => (r as string)?.toLowerCase() === userRole);
+      if (!isAllowed) {
+        navigate('/dashboard', { replace: true });
+      }
     }
   }, [user, activeItem, navigate]);
 

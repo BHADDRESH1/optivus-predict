@@ -6,6 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "node -e \"console.log('Backend build complete')\"",
     "dev": "nodemon server.js",
     "lint": "eslint . --ext .js",
     "test": "jest --runInBand",

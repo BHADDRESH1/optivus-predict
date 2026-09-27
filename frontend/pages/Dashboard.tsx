@@ -48,7 +48,8 @@ export const Dashboard: React.FC = () => {
       icon: Pill,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      borderColor: 'border-blue-200',
+      path: '/admin/medicine-inventory'
     },
     {
       title: 'High Risk Medicines',
@@ -57,7 +58,8 @@ export const Dashboard: React.FC = () => {
       icon: AlertTriangle,
       color: 'text-rose-600',
       bgColor: 'bg-rose-50',
-      borderColor: 'border-rose-200'
+      borderColor: 'border-rose-200',
+      path: '/admin/stockout-prediction'
     },
     {
       title: 'Predicted Stockouts',
@@ -66,7 +68,8 @@ export const Dashboard: React.FC = () => {
       icon: TrendingDown,
       color: 'text-amber-600',
       bgColor: 'bg-amber-50',
-      borderColor: 'border-amber-200'
+      borderColor: 'border-amber-200',
+      path: '/admin/stockout-prediction'
     },
     {
       title: 'Redistribution Opportunities',
@@ -75,7 +78,8 @@ export const Dashboard: React.FC = () => {
       icon: ArrowLeftRight,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
-      borderColor: 'border-emerald-200'
+      borderColor: 'border-emerald-200',
+      path: '/admin/redistribution'
     }
   ];
 
@@ -191,17 +195,17 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center gap-3">
           <Button 
             onClick={() => navigate('/admin/stockout-prediction')} 
-            className="bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow"
+            className="bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow-sm flex items-center gap-2"
           >
             <Sparkles size={16} />
-            Run Stockout AI
+            <span>Run Stockout AI</span>
           </Button>
           <Button 
             onClick={() => navigate('/admin/redistribution')} 
-            className="bg-blue-600/60 hover:bg-blue-600 text-white border border-blue-400 font-medium"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm flex items-center gap-2 ring-2 ring-emerald-400/40"
           >
             <ArrowLeftRight size={16} />
-            Smart Redistribution
+            <span>Smart Redistribution</span>
           </Button>
         </div>
       </div>
@@ -213,31 +217,43 @@ export const Dashboard: React.FC = () => {
             <Info size={14} className="text-blue-600" />
             Decision Intelligence Workflow
           </span>
-          <span className="text-slate-400">Prototype Demo • Hospital A Hub</span>
+          <span className="text-slate-400">Interactive Pipeline • Click any step to inspect</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="p-3 rounded-lg bg-blue-50/70 border border-blue-100 flex items-start gap-3">
+          <div 
+            onClick={() => navigate('/admin/stockout-prediction')}
+            className="p-3 rounded-lg bg-blue-50/70 border border-blue-100 flex items-start gap-3 cursor-pointer hover:bg-blue-100/70 hover:shadow-xs transition-all"
+          >
             <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0">1</div>
             <div>
               <p className="text-xs font-bold text-blue-900 uppercase">PREDICT</p>
               <p className="text-[11px] text-blue-700 mt-0.5">Forecast remaining stock days using consumption analytics</p>
             </div>
           </div>
-          <div className="p-3 rounded-lg bg-amber-50/70 border border-amber-100 flex items-start gap-3">
+          <div 
+            onClick={() => navigate('/admin/analytics')}
+            className="p-3 rounded-lg bg-amber-50/70 border border-amber-100 flex items-start gap-3 cursor-pointer hover:bg-amber-100/70 hover:shadow-xs transition-all"
+          >
             <div className="w-7 h-7 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shrink-0">2</div>
             <div>
               <p className="text-xs font-bold text-amber-900 uppercase">DETECT</p>
               <p className="text-[11px] text-amber-700 mt-0.5">Flag unusual consumption anomalies & reporting gaps</p>
             </div>
           </div>
-          <div className="p-3 rounded-lg bg-purple-50/70 border border-purple-100 flex items-start gap-3">
+          <div 
+            onClick={() => navigate('/admin/redistribution')}
+            className="p-3 rounded-lg bg-purple-50/70 border border-purple-100 flex items-start gap-3 cursor-pointer hover:bg-purple-100/70 hover:shadow-xs transition-all"
+          >
             <div className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0">3</div>
             <div>
               <p className="text-xs font-bold text-purple-900 uppercase">RECOMMEND</p>
               <p className="text-[11px] text-purple-700 mt-0.5">Identify neighboring facilities with projected excess stock</p>
             </div>
           </div>
-          <div className="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100 flex items-start gap-3">
+          <div 
+            onClick={() => navigate('/admin/redistribution')}
+            className="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100 flex items-start gap-3 cursor-pointer hover:bg-emerald-100/70 hover:shadow-xs transition-all"
+          >
             <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">4</div>
             <div>
               <p className="text-xs font-bold text-emerald-900 uppercase">ACT</p>
@@ -252,12 +268,19 @@ export const Dashboard: React.FC = () => {
         {kpiData.map((kpi, idx) => {
           const Icon = kpi.icon;
           return (
-            <Card key={idx} className="border-slate-200 hover:shadow-md transition-shadow">
+            <Card 
+              key={idx} 
+              onClick={() => kpi.path && navigate(kpi.path)}
+              className="border-slate-200 hover:shadow-md transition-all cursor-pointer hover:border-blue-300"
+            >
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{kpi.title}</p>
                   <p className="text-3xl font-extrabold text-slate-900 mt-1">{kpi.value}</p>
-                  <p className="text-xs font-medium text-slate-500 mt-1">{kpi.subtitle}</p>
+                  <p className="text-xs font-medium text-slate-500 mt-1 flex items-center gap-1">
+                    <span>{kpi.subtitle}</span>
+                    <ChevronRight size={12} className="text-slate-400" />
+                  </p>
                 </div>
                 <div className={`p-3 rounded-xl ${kpi.bgColor} ${kpi.borderColor} border`}>
                   <Icon size={22} className={kpi.color} />

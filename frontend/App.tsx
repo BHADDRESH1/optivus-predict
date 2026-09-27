@@ -24,8 +24,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles?: Role[] }>
   }
 
   // 2. Check Role Authorization
-  if (roles && user && !roles.includes(user.role as Role)) {
-    return <Navigate to="/dashboard" replace />;
+  if (roles && user) {
+    const userRole = (user.role as string)?.toLowerCase();
+    const isAuthorized = roles.some(r => (r as string)?.toLowerCase() === userRole);
+    if (!isAuthorized) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return children;
@@ -71,7 +75,7 @@ const AppRoutes: React.FC = () => {
       
       {/* Smart Redistribution Module */}
       <Route path="/admin/redistribution" element={
-        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR]}>
+        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST]}>
           <Layout><Redistribution /></Layout>
         </ProtectedRoute>
       } />
@@ -81,7 +85,7 @@ const AppRoutes: React.FC = () => {
       
       {/* Alerts */}
       <Route path="/admin/alerts" element={
-        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR]}>
+        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST]}>
           <Layout><AlertsPage /></Layout>
         </ProtectedRoute>
       } />
@@ -89,7 +93,7 @@ const AppRoutes: React.FC = () => {
       
       {/* Reports */}
       <Route path="/admin/reports" element={
-        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR]}>
+        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST]}>
           <Layout><ReportsPage /></Layout>
         </ProtectedRoute>
       } />
@@ -97,14 +101,14 @@ const AppRoutes: React.FC = () => {
       
       {/* Facilities Network Module */}
       <Route path="/admin/facilities" element={
-        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR]}>
+        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST]}>
           <Layout><FacilitiesPage /></Layout>
         </ProtectedRoute>
       } />
       
       {/* Users / Administration */}
       <Route path="/admin/users" element={
-        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD]}>
+        <ProtectedRoute roles={[Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST]}>
           <Layout><UsersAdminPage /></Layout>
         </ProtectedRoute>
       } />
