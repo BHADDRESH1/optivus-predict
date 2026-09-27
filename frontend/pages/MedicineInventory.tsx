@@ -18,9 +18,18 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { Role } from '../types';
+import { normalizeRole, getRoleInfo, hasPermission } from '../permissions';
 
 export const MedicineInventory: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const currentRole = normalizeRole(user?.role);
+  const roleInfo = getRoleInfo(currentRole);
+  const canAddMedicine = hasPermission(user?.role, 'inventory.edit_master');
+  const isViewOnly = currentRole === Role.HOSPITAL_HEAD;
+
   const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFacility, setSelectedFacility] = useState('All');
@@ -130,13 +139,27 @@ export const MedicineInventory: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="shadow-sm font-semibold"
-          >
-            <Plus size={18} />
-            + Add Medicine
-          </Button>
+          {canAddMedicine && (
+            <Button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="shadow-sm font-semibold"
+            >
+              <Plus size={18} />
+              + Add Medicine
+            </Button>
+          )}
+
+          {isViewOnly && (
+            <div className="px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50 text-teal-800 text-xs font-bold flex items-center gap-1.5">
+              <span>Executive View (Read-Only)</span>
+            </div>
+          )}
+
+          {currentRole === Role.PHARMACIST && (
+            <div className="px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
+              <span>Dispensary Stock Mode</span>
+            </div>
+          )}
         </div>
       </div>
 

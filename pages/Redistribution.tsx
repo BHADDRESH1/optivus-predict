@@ -20,9 +20,16 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { normalizeRole, getRoleInfo, hasPermission } from '../permissions';
 
 export const Redistribution: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const currentRole = normalizeRole(user?.role);
+  const roleInfo = getRoleInfo(currentRole);
+  const canApprove = hasPermission(user?.role, 'redistribution.approve');
+
   const [recommendations, setRecommendations] = useState<RedistributionRecommendation[]>(MOCK_RECOMMENDATIONS);
   const [selectedRec, setSelectedRec] = useState<RedistributionRecommendation | null>(null);
   const [approvalModalOpen, setApprovalModalOpen] = useState(false);
@@ -37,17 +44,35 @@ export const Redistribution: React.FC = () => {
 
   const handleApprove = () => {
     if (!selectedRec) return;
+
+    if (!canApprove) {
+      // Pharmacy Supervisor request flow
+      setRecommendations(prev => prev.map(item => {
+        if (item.id === selectedRec.id) {
+          return {
+            ...item,
+            status: 'Pending Approval',
+            approvedBy: 'Requested by Pharmacy Supervisor'
+          };
+        }
+        return item;
+      }));
+      setActionSuccessMessage(`Transfer request for ${selectedRec.medicineName} (${selectedRec.recommendedQuantity} units) submitted for Executive Approval by Hospital Head.`);
+      setApprovalModalOpen(false);
+      return;
+    }
+
     setRecommendations(prev => prev.map(item => {
       if (item.id === selectedRec.id) {
         return {
           ...item,
           status: 'Approved',
-          approvedBy: 'Admin (You)'
+          approvedBy: `${roleInfo.badge} (You)`
         };
       }
       return item;
     }));
-    setActionSuccessMessage(`Successfully approved transfer order ${selectedRec.id}: 100 units of ${selectedRec.medicineName} scheduled from ${selectedRec.sourceFacility} to ${selectedRec.destinationFacility}.`);
+    setActionSuccessMessage(`Successfully authorized by ${roleInfo.badge}: Transfer order ${selectedRec.id} (100 units of ${selectedRec.medicineName}) scheduled from ${selectedRec.sourceFacility} to ${selectedRec.destinationFacility}.`);
     setApprovalModalOpen(false);
   };
 
@@ -58,7 +83,7 @@ export const Redistribution: React.FC = () => {
         return {
           ...item,
           status: 'Rejected',
-          approvedBy: 'Rejected by Admin'
+          approvedBy: `Rejected by ${roleInfo.badge}`
         };
       }
       return item;
@@ -400,24 +425,42 @@ export const Redistribution: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleReject}
-                  className="text-rose-600 hover:bg-rose-50 border-rose-200 font-bold"
-                >
-                  <XCircle size={16} />
-                  Reject Transfer
-                </Button>
-                <Button 
-                  type="button" 
-                  onClick={handleApprove}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                >
-                  <CheckCircle2 size={16} />
-                  Approve Transfer (100 units)
-                </Button>
+              <div className="pt-2 flex items-center justify-between gap-3">
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${roleInfo.badgeColor}`}>
+                  {canApprove ? 'Executive Authority: Sign-off & Approve' : 'Pharmacy Authority: Transfer Request Submission'}
+                </span>
+                <div className="flex items-center gap-2">
+                  {canApprove ? (
+                    <>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={handleReject}
+                        className="text-rose-600 hover:bg-rose-50 border-rose-200 font-bold"
+                      >
+                        <XCircle size={16} />
+                        Reject Transfer
+                      </Button>
+                      <Button 
+                        type="button" 
+                        onClick={handleApprove}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                      >
+                        <CheckCircle2 size={16} />
+                        Approve Transfer (100 units)
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      type="button" 
+                      onClick={handleApprove}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                    >
+                      <CheckCircle2 size={16} />
+                      Submit Transfer Request for Executive Sign-off
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

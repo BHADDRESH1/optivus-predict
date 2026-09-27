@@ -29,59 +29,267 @@ import {
   Sparkles,
   ChevronRight,
   ExternalLink,
-  Info
+  Info,
+  CheckCircle2,
+  BarChart3,
+  Users,
+  AlertCircle,
+  FileText
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Role } from '../types';
+import { normalizeRole, getRoleInfo } from '../permissions';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedFacility, setSelectedFacility] = useState('All Facilities');
 
-  // KPI Metrics (Demo Prototype values aligned with requirements)
-  const kpiData = [
-    {
-      title: 'Total Medicines',
-      value: '128',
-      subtitle: 'Across 4 regional facilities',
-      icon: Pill,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      path: '/admin/medicine-inventory'
-    },
-    {
-      title: 'High Risk Medicines',
-      value: '7',
-      subtitle: '< 10 days supply remaining',
-      icon: AlertTriangle,
-      color: 'text-rose-600',
-      bgColor: 'bg-rose-50',
-      borderColor: 'border-rose-200',
-      path: '/admin/stockout-prediction'
-    },
-    {
-      title: 'Predicted Stockouts',
-      value: '4',
-      subtitle: 'AI forecast next 14 days',
-      icon: TrendingDown,
-      color: 'text-amber-600',
-      bgColor: 'bg-amber-50',
-      borderColor: 'border-amber-200',
-      path: '/admin/stockout-prediction'
-    },
-    {
-      title: 'Redistribution Opportunities',
-      value: '3',
-      subtitle: '2 cross-facility matches ready',
-      icon: ArrowLeftRight,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50',
-      borderColor: 'border-emerald-200',
-      path: '/admin/redistribution'
+  const currentRole = normalizeRole(user?.role);
+  const roleInfo = getRoleInfo(currentRole);
+
+  // Dynamic KPI Metrics tailored by active Role
+  const kpiData = (() => {
+    switch (currentRole) {
+      case Role.ADMIN:
+        return [
+          {
+            title: 'Total Facilities',
+            value: '4',
+            subtitle: 'Across regional network',
+            icon: Building2,
+            color: 'text-indigo-600',
+            bgColor: 'bg-indigo-50',
+            borderColor: 'border-indigo-200',
+            path: '/admin/facilities'
+          },
+          {
+            title: 'Total Medicines',
+            value: '128',
+            subtitle: 'Active formulations tracked',
+            icon: Pill,
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'High Risk Medicines',
+            value: '7',
+            subtitle: '< 10 days supply remaining',
+            icon: AlertTriangle,
+            color: 'text-rose-600',
+            bgColor: 'bg-rose-50',
+            borderColor: 'border-rose-200',
+            path: '/admin/stockout-prediction'
+          },
+          {
+            title: 'Predicted Stockouts',
+            value: '4',
+            subtitle: 'AI forecast next 14 days',
+            icon: TrendingDown,
+            color: 'text-amber-600',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-200',
+            path: '/admin/stockout-prediction'
+          },
+          {
+            title: 'Redistribution Matches',
+            value: '3',
+            subtitle: '2 cross-facility matches ready',
+            icon: ArrowLeftRight,
+            color: 'text-emerald-600',
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-200',
+            path: '/admin/redistribution'
+          },
+          {
+            title: 'Critical Alerts',
+            value: '3',
+            subtitle: 'System-wide anomalies & gaps',
+            icon: AlertCircle,
+            color: 'text-red-600',
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-200',
+            path: '/admin/alerts'
+          }
+        ];
+
+      case Role.HOSPITAL_HEAD:
+        return [
+          {
+            title: 'Medicine Availability',
+            value: '94.2%',
+            subtitle: 'Facility service level score',
+            icon: ShieldCheck,
+            color: 'text-teal-600',
+            bgColor: 'bg-teal-50',
+            borderColor: 'border-teal-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'Critical Stockouts',
+            value: '2',
+            subtitle: 'Imminent shortages < 7 days',
+            icon: TrendingDown,
+            color: 'text-rose-600',
+            bgColor: 'bg-rose-50',
+            borderColor: 'border-rose-200',
+            path: '/admin/stockout-prediction'
+          },
+          {
+            title: 'High Risk Medicines',
+            value: '7',
+            subtitle: 'Under intensive surveillance',
+            icon: AlertTriangle,
+            color: 'text-amber-600',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-200',
+            path: '/admin/stockout-prediction'
+          },
+          {
+            title: 'Pending Decisions',
+            value: '2',
+            subtitle: 'Redistribution awaiting approval',
+            icon: ArrowLeftRight,
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-200',
+            path: '/admin/redistribution'
+          },
+          {
+            title: 'Critical Alerts',
+            value: '1',
+            subtitle: 'Urgent executive escalation',
+            icon: AlertCircle,
+            color: 'text-red-600',
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-200',
+            path: '/admin/alerts'
+          }
+        ];
+
+      case Role.SUPERVISOR:
+        return [
+          {
+            title: 'Current Inventory',
+            value: '128',
+            subtitle: 'Central pharmacy formulations',
+            icon: Pill,
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'Low Stock Medicines',
+            value: '12',
+            subtitle: 'At or below reorder level',
+            icon: AlertTriangle,
+            color: 'text-rose-600',
+            bgColor: 'bg-rose-50',
+            borderColor: 'border-rose-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'Stockout Threats',
+            value: '7',
+            subtitle: 'Predicted supply runout',
+            icon: TrendingDown,
+            color: 'text-amber-600',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-200',
+            path: '/admin/stockout-prediction'
+          },
+          {
+            title: 'Daily Consumption',
+            value: '1,840',
+            subtitle: 'Average units dispensed/day',
+            icon: BarChart3,
+            color: 'text-indigo-600',
+            bgColor: 'bg-indigo-50',
+            borderColor: 'border-indigo-200',
+            path: '/admin/analytics'
+          },
+          {
+            title: 'Transfer Requests',
+            value: '2',
+            subtitle: 'Submitted for executive review',
+            icon: ArrowLeftRight,
+            color: 'text-emerald-600',
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-200',
+            path: '/admin/redistribution'
+          },
+          {
+            title: 'Expiring Batches',
+            value: '3',
+            subtitle: 'Batches expiring within 60 days',
+            icon: Calendar,
+            color: 'text-purple-600',
+            bgColor: 'bg-purple-50',
+            borderColor: 'border-purple-200',
+            path: '/admin/reports'
+          }
+        ];
+
+      case Role.PHARMACIST:
+      default:
+        return [
+          {
+            title: 'Medicines Available',
+            value: '64',
+            subtitle: 'Dispensary active stock lines',
+            icon: Pill,
+            color: 'text-emerald-600',
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'Low Stock Items',
+            value: '3',
+            subtitle: 'Immediate reorder needed',
+            icon: AlertTriangle,
+            color: 'text-rose-600',
+            bgColor: 'bg-rose-50',
+            borderColor: 'border-rose-200',
+            path: '/admin/alerts'
+          },
+          {
+            title: "Today's Dispensing",
+            value: '246',
+            subtitle: 'Patient prescriptions served',
+            icon: CheckCircle2,
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-200',
+            path: '/admin/medicine-inventory'
+          },
+          {
+            title: 'Dispensary Alerts',
+            value: '1',
+            subtitle: 'Insulin replenishment needed',
+            icon: AlertCircle,
+            color: 'text-red-600',
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-200',
+            path: '/admin/alerts'
+          },
+          {
+            title: 'Attention Required',
+            value: '2',
+            subtitle: 'ORS & Insulin fast-dispensing',
+            icon: TrendingDown,
+            color: 'text-amber-600',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-200',
+            path: '/admin/medicine-inventory'
+          }
+        ];
     }
-  ];
+  })();
 
   // Stockout Risk projection chart data (Days vs Projected Units for Insulin and ORS at Hospital A)
   const trendData = [
@@ -178,35 +386,125 @@ export const Dashboard: React.FC = () => {
       {/* Top Welcome & Context Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white p-6 rounded-2xl shadow-md">
         <div>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="bg-white/20 backdrop-blur-sm text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">
               Sustain-a-thon 2026 • PS-03-S2
             </span>
             <span className="bg-emerald-500/80 text-white text-xs px-2.5 py-0.5 rounded-full font-semibold">
               SDG 3: Good Health & Well-being
             </span>
+            <span className="bg-purple-500/80 text-white text-xs px-2.5 py-0.5 rounded-full font-bold uppercase">
+              {roleInfo.badge}
+            </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Medicine Supply Dashboard</h1>
           <p className="text-blue-100 text-sm mt-1 max-w-2xl">
-            OPTIVUS Predict helps healthcare facilities predict medicine shortages before they happen and recommends preventive action.
+            {roleInfo.description}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button 
-            onClick={() => navigate('/admin/stockout-prediction')} 
-            className="bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow-sm flex items-center gap-2"
-          >
-            <Sparkles size={16} />
-            <span>Run Stockout AI</span>
-          </Button>
-          <Button 
-            onClick={() => navigate('/admin/redistribution')} 
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm flex items-center gap-2 ring-2 ring-emerald-400/40"
-          >
-            <ArrowLeftRight size={16} />
-            <span>Smart Redistribution</span>
-          </Button>
+        {/* Role-Specific Quick Action Buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {currentRole === Role.ADMIN && (
+            <>
+              <Button 
+                onClick={() => navigate('/admin/users')} 
+                className="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs py-2 px-3 flex items-center gap-1.5"
+              >
+                <Users size={14} />
+                <span>Users / Admin</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/admin/facilities')} 
+                className="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs py-2 px-3 flex items-center gap-1.5"
+              >
+                <Building2 size={14} />
+                <span>Facilities</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/admin/stockout-prediction')} 
+                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold text-xs py-2 px-3 flex items-center gap-1.5 shadow-sm"
+              >
+                <Sparkles size={14} />
+                <span>Run AI</span>
+              </Button>
+            </>
+          )}
+
+          {currentRole === Role.HOSPITAL_HEAD && (
+            <>
+              <Button 
+                onClick={() => navigate('/admin/redistribution')} 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 flex items-center gap-1.5 ring-2 ring-emerald-400/40"
+              >
+                <ArrowLeftRight size={14} />
+                <span>Approve Transfers</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/admin/reports')} 
+                className="bg-white text-teal-800 hover:bg-teal-50 font-semibold text-xs py-2 px-3 flex items-center gap-1.5 shadow-sm"
+              >
+                <FileText size={14} />
+                <span>Executive Reports</span>
+              </Button>
+            </>
+          )}
+
+          {currentRole === Role.SUPERVISOR && (
+            <>
+              <Button 
+                onClick={() => navigate('/admin/stockout-prediction')} 
+                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold text-xs py-2 px-3 flex items-center gap-1.5 shadow-sm"
+              >
+                <Sparkles size={14} />
+                <span>Run Stockout AI</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/admin/medicine-inventory')} 
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs py-2 px-3 flex items-center gap-1.5"
+              >
+                <Pill size={14} />
+                <span>Manage Stock</span>
+              </Button>
+            </>
+          )}
+
+          {currentRole === Role.PHARMACIST && (
+            <>
+              <Button 
+                onClick={() => navigate('/admin/medicine-inventory')} 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 flex items-center gap-1.5 shadow-sm"
+              >
+                <Pill size={14} />
+                <span>Dispense Medicine</span>
+              </Button>
+              <Button 
+                onClick={() => navigate('/admin/alerts')} 
+                className="bg-white text-emerald-800 hover:bg-emerald-50 font-semibold text-xs py-2 px-3 flex items-center gap-1.5 shadow-sm"
+              >
+                <AlertTriangle size={14} />
+                <span>Dispensary Alerts</span>
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Active Role Executive Scope Card */}
+      <div className="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className={`px-2.5 py-1 rounded-full font-bold text-xs border ${roleInfo.badgeColor}`}>
+            Active: {roleInfo.label}
+          </span>
+          <span className="text-xs text-slate-500 font-medium hidden md:inline">
+            Role Responsibility: {roleInfo.description}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-slate-400 font-semibold uppercase tracking-wider">Authorized Facility Scope:</span>
+          <span className="font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+            {roleInfo.scope}
+          </span>
         </div>
       </div>
 

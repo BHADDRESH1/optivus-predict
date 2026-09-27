@@ -1,6 +1,6 @@
 import express from 'express';
 import RedistributionRecommendation from '../models/RedistributionRecommendation.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireAnyRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -52,8 +52,8 @@ router.get('/recommendations', async (req, res) => {
   }
 });
 
-// POST /api/redistribution/recommendations/:id/approve
-router.post('/recommendations/:id/approve', authenticate, async (req, res) => {
+// POST /api/redistribution/recommendations/:id/approve (Admin & Hospital Head only)
+router.post('/recommendations/:id/approve', authenticate, requireAnyRole(['admin', 'hospital head']), async (req, res) => {
   try {
     const rec = await RedistributionRecommendation.findOneAndUpdate(
       { recommendationId: req.params.id },
@@ -74,8 +74,8 @@ router.post('/recommendations/:id/approve', authenticate, async (req, res) => {
   }
 });
 
-// POST /api/redistribution/recommendations/:id/reject
-router.post('/recommendations/:id/reject', authenticate, async (req, res) => {
+// POST /api/redistribution/recommendations/:id/reject (Admin & Hospital Head only)
+router.post('/recommendations/:id/reject', authenticate, requireAnyRole(['admin', 'hospital head']), async (req, res) => {
   try {
     defaultRecommendations = defaultRecommendations.map(r => 
       (r.id === req.params.id || r.recommendationId === req.params.id) 

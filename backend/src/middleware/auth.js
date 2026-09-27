@@ -19,7 +19,17 @@ export const requireRole = (role) => (req, res, next) => {
   const userRole = req.user.role?.toLowerCase();
   const requiredRole = role?.toLowerCase();
   if (userRole !== requiredRole && userRole !== 'admin') {
-    return res.status(403).json({ message: 'Forbidden' });
+    return res.status(403).json({ message: 'Forbidden: Insufficient role permissions' });
+  }
+  next();
+};
+
+export const requireAnyRole = (roles = []) => (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+  const userRole = req.user.role?.toLowerCase();
+  const allowed = roles.map(r => r.toLowerCase());
+  if (!allowed.includes(userRole) && userRole !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Insufficient role permissions' });
   }
   next();
 };

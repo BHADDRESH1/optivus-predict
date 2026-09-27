@@ -28,15 +28,15 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Medicine Inventory', path: '/admin/medicine-inventory', icon: Pill, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Stockout Prediction', path: '/admin/stockout-prediction', icon: TrendingDown, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Consumption Analytics', path: '/admin/analytics', icon: BarChart3, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Redistribution', path: '/admin/redistribution', icon: ArrowLeftRight, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Alerts', path: '/admin/alerts', icon: AlertTriangle, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Reports', path: '/admin/reports', icon: FileText, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Facilities', path: '/admin/facilities', icon: Building2, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
-  { label: 'Users / Admin', path: '/admin/users', icon: Users, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.TECHNICIAN, Role.PHARMACIST] },
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.PHARMACIST] },
+  { label: 'Medicine Inventory', path: '/admin/medicine-inventory', icon: Pill, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.PHARMACIST] },
+  { label: 'Stockout Prediction', path: '/admin/stockout-prediction', icon: TrendingDown, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR] },
+  { label: 'Consumption Analytics', path: '/admin/analytics', icon: BarChart3, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR] },
+  { label: 'Redistribution', path: '/admin/redistribution', icon: ArrowLeftRight, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR] },
+  { label: 'Alerts', path: '/admin/alerts', icon: AlertTriangle, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.PHARMACIST] },
+  { label: 'Reports', path: '/admin/reports', icon: FileText, roles: [Role.ADMIN, Role.HOSPITAL_HEAD, Role.SUPERVISOR, Role.PHARMACIST] },
+  { label: 'Facilities', path: '/admin/facilities', icon: Building2, roles: [Role.ADMIN, Role.HOSPITAL_HEAD] },
+  { label: 'Users / Admin', path: '/admin/users', icon: Users, roles: [Role.ADMIN] },
 ];
 
 export const MOCK_FACILITIES: Facility[] = [
